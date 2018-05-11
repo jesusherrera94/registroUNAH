@@ -157,6 +157,15 @@ app.get("/obtener-titularidad",function(peticion, respuesta){
 		respuesta.send(informacion);
 	});
 });
+
+app.get("/obtener-carreras",function(peticion, respuesta){
+	var conexion = mysql.createConnection(credenciales);
+	conexion.query("SELECT CODIGO_CARRERA, NOMBRE_CARRERA FROM TBL_CARRERAS", function(error, informacion, campos){
+		conexion.end();
+		respuesta.send(informacion);
+	});
+});
+
 app.get("/obtener-especializacion",function(peticion, respuesta){
 	var conexion = mysql.createConnection(credenciales);
 	conexion.query("SELECT CODIGO_ESPECIALIZACION, DESCRIPCION FROM TBL_AREA_ESPECIALIZACIONES", function(error, informacion, campos){
@@ -263,5 +272,61 @@ app.post("/guardar-empleado-admin", function(peticion, respuesta){
 			
 		});
 });
+
+
+app.post("/guardar-alumno", function(peticion, respuesta){
+	
+	var conexion = mysql.createConnection(credenciales);
+	conexion.query(
+		`INSERT INTO TBL_PERSONAS
+		(CODIGO_PERSONA, CODIGO_GENERO, CODIGO_CAMPUS, CODIGO_ESTADO_CIVIL, NOMBRE, APELLIDO, FECHA_NACIMIENTO, IDENTIDAD, DIRECCION, TELEFONO, CORREO_ELECTRONICO) 
+		VALUES (NULL,?,?,?,?,?,?,?,?,?,?)`, 
+		[
+			peticion.body.genero,
+			peticion.body.campus,
+			peticion.body.estadoCivil,
+			peticion.body.nombres,
+			peticion.body.apellidos,
+			peticion.body.fechaNacimiento,
+			peticion.body.identidad,
+			peticion.body.direccion,
+			peticion.body.telefono,
+			peticion.body.email
+		],
+		function(error, resultado){
+			if (resultado.affectedRows==1){
+				conexion.query("INSERT INTO TBL_CARRERAS_X_ALUMNOS(CODIGO_CARRERA, CODIGO_ALUMNO, FECHA_REGISTRO_CARRERA, PROMEDIO_CARRERA, CANTIDAD_CLASES_APROBADAS) VALUES (?,?,sysdate(),?,?)",
+					[
+						peticion.body.codigoCarrera,
+						resultado.insertId,
+						peticion.body.promedio,
+						peticion.body.clasesAprobadas,
+					],
+					function(errorSelect, resultado2){
+						if (errorSelect) throw errorSelect;
+
+						if(resultado2.affectedRows==1){
+							conexion.query(`INSERT INTO TBL_ALUMNOS(CODIGO_ALUMNO, NUMERO_CUENTA, PROMEDIO, CONTRASE) VALUES (?,?,?,?)`,[
+								resultado.insertId,
+								peticion.body.cuenta,
+								peticion.body.promedio,
+								peticion.body.contrasenia,
+							],function(error3,resultado3){
+								if(resultado3.affectedRows==1){
+								conexion.end();
+								respuesta.send('Inserts exitosos');
+								}
+							})
+
+						}
+								
+					}
+				);
+			}
+			
+		});
+});
+
+
 
 app.listen(2020);

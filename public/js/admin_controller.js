@@ -25,14 +25,34 @@ $(document).ready(function(){
         method: "GET",
         datatype: 'json',
         success:function(respuesta){
-            for(let i=0; i<respuesta.length; i++)
+            for(let i=0; i<respuesta.length; i++){
             $('#campus-trabajo-empleado').append(`<option value="${respuesta[i].CODIGO_CAMPUS}">${respuesta[i].NOMBRE_CAMPUS}</option>`)
-
+            $('#campus-alumno').append(`<option value="${respuesta[i].CODIGO_CAMPUS}">${respuesta[i].NOMBRE_CAMPUS}</option>`)
+            }
             $('select').select2();
-            obtenerEstadoCivil();    
+            obtenerEstadoCivil();
+            obtenerCarreras();    
         }
     })
 })
+
+function obtenerCarreras(){
+    $.ajax({
+        url:"/obtener-carreras",
+        method: "GET",
+        datatype: 'json',
+        success:function(respuesta){
+            for(let i=0; i<respuesta.length; i++)
+            $('#carrera').append(`<option value="${respuesta[i].CODIGO_CARRERA}">${respuesta[i].NOMBRE_CARRERA}</option>`)
+
+            $('select').select2();    
+        }
+    })
+}
+
+
+
+
 function obtenerEstadoCivil(){
     $.ajax({
         url:"/obtener-estado-civil",
@@ -40,9 +60,10 @@ function obtenerEstadoCivil(){
         datatype: 'json',
         success:function(respuesta){
             //CODIGO_ESTADO_CIVIL, NOMBRE_ESTADO_CIVIL
-            for(let i=0; i<respuesta.length; i++)
+            for(let i=0; i<respuesta.length; i++){
             $('#estado-civil-empleado').append(`<option value="${respuesta[i].CODIGO_ESTADO_CIVIL}">${respuesta[i].NOMBRE_ESTADO_CIVIL}</option>`)
-
+            $('#estado-civil-alumno').append(`<option value="${respuesta[i].CODIGO_ESTADO_CIVIL}">${respuesta[i].NOMBRE_ESTADO_CIVIL}</option>`)
+            }
             $('select').select2();
             obtenerTipoDeEmpleado();    
         }
@@ -301,7 +322,8 @@ $('#crear-empleado').click(function(){
         data: parametros,
         datatype: 'json',
         success:function(respuesta){
-            alert("Se creó el/ empleado con Éxito")
+            alert("Se creó el Empleado con Éxito")
+            $('input').val('')
         },
         error: function(){
             alert("Ha ocurrido un error")
@@ -312,17 +334,38 @@ $('#crear-empleado').click(function(){
             parametros = "nombres="+$('#nombres').val()+"&apellidos="+$('#apellidos').val()+"&fechaNacimiento="+$('#fecha-nacimiento').val()+"&identidad="+$('#identidad').val()+"&direccion="+$('#direccion').val()+"&telefono="+$("#telefono").val()
             +"&email="+$('#email').val()+"&genero="+$('input:radio[name=genero]:checked').val()+"&campus="+$("#campus-trabajo-empleado").val()+"&estadoCivil="+$('#estado-civil-empleado').val()+"&sueldoBase="+$('#sueldo-base').val()+"&tipoEmpleado="+$('#tipo-empleado').val()+"&cargo="+$('#cargo').val()+
             "&contrasenia="+$('#contrasenia').val()+"&numeroEmpleado="+$('#numero-empleado').val();
-        $.ajax({
+       $.ajax({
             url:"/guardar-empleado-admin",
             method: "POST",
             data: parametros,
             datatype: 'json',
             success:function(respuesta){
                 alert("Se creó el empleado con Éxito")
+                $('input').val('')
             },
             error: function(){
                 alert("Ha ocurrido un error")
             }
         });
     }
+})
+
+$('#crear-alumno').click(function(){
+        parametros = "nombres="+$('#nombres-alumno').val()+"&apellidos="+$('#apellidos-alumno').val()+"&fechaNacimiento="+$('#fecha-nacimiento-alumno').val()+"&identidad="+$('#identidad-alumno').val()+"&direccion="+$('#direccion-alumno').val()+"&telefono="+$("#telefono-alumno").val()
+        +"&email="+$('#email-alumno').val()+"&genero="+$('input:radio[name=genero-alumno]:checked').val()+"&campus="+$("#campus-alumno").val()+"&estadoCivil="+$('#estado-civil-alumno').val()+  "&cuenta="+$('#numero-cuenta').val()+"&codigoCarrera="+$('#carrera').val()+"&promedio="+$('#promedio').val()+
+        "&clasesAprobadas="+$('#clases-aprobadas').val()+"&contrasenia="+$('#contrasenia-alumno').val();
+        console.log(parametros)
+    $.ajax({
+        url:"/guardar-alumno",
+        method: "POST",
+        data: parametros,
+        datatype: 'json',
+        success:function(respuesta){
+            alert("Se creó el Alumno con Éxito")
+            $('input').val('')
+        },
+        error: function(){
+            alert("Ha ocurrido un error")
+        }
+    });
 })

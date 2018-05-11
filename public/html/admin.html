@@ -16,8 +16,7 @@
         <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
             <a class="nav-link active" id="v-pills-centros-regionales-tab" data-toggle="pill" href="#v-pills-centros-regionales" role="tab" aria-controls="v-pills-centros-regionales" aria-selected="true">Centros Regionales</a>
             <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Personal</a>
-            <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Messages</a>
-            <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a>
+            <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Alumnos</a>
           </div>
     </div> 
     <div class="col-11"> 
@@ -106,8 +105,45 @@
               <hr>
           </div>
           <!--Fin Personal-->
-          <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">Otra cosa2</div>
-          <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">Otra cosa3</div>  
+          <!--Inicio Alumnos-->
+          <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+            <h1>Alumnos</h1>
+            <hr>
+            <div class="row">
+            <div class="col-sm-6">
+            <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Datos Personales</h5>
+                    <hr>
+                   <label for="nombre"> Nombres: <input type="text" id="nombres-alumno" class="form-control" placeholder="Nombres"></label>
+                   <label for="apellido"> Apellido: <input type="text" id="apellidos-alumno" class="form-control" placeholder="Apellido"></label>
+                   <label for="fecha-nacimiento"> Fecha de nacimiento: <input type="date" id="fecha-nacimiento-alumno" class="form-control"></label>
+                   <label for="identidad"> Identidad: <input type="number" id="identidad-alumno" class="form-control" placeholder="0801199403872" min="0" max="13"></label>
+                   <label for="direccion"> Dirección: <input type="text" id="direccion-alumno" class="form-control" placeholder="Dirección"></label>
+                   <label for="telefono"> Telefono: <input type="text" id="telefono-alumno" class="form-control" placeholder="Telefono"></label>
+                   <label for="email"> Email: <input type="email" id="email-alumno" class="form-control" placeholder="email@email.com"></label>
+                   <label for="femenino-alumno">Femenino: <input type="radio" name="genero-alumno" id="femenino-alumno" value="1"></label>
+                   <label for="masculino-alumno">Masculino: <input type="radio" name="genero-alumno" id="masculino-alumno" value="2"></label>
+                   <select name="campus-alumno" id="campus-alumno"></select>
+                   <select name="estado-civil-alumno" id="estado-civil-alumno"></select>
+
+                   <br>
+                   <h4>Datos Académicos</h4>
+                   <hr>
+                   <label for="numero-cuenta"> Número de Cuenta: <input type="number" id="numero-cuenta" class="form-control" placeholder="" min="10000000000" max="99999999999"></label>
+                   <select name="carrera" id="carrera"></select>
+                   <label for="promedio"> Promedio: <input type="number" id="promedio" class="form-control" placeholder="1234" min="0" max="100"></label>
+                   <label for="contrasenia-alumno"> Contraseña: <input type="password" id="contrasenia-alumno" class="form-control" placeholder="contraseña"></label>
+                   <label for="clases-aprobadas"> Clases Aprobadas: <input type="number" id="clases-aprobadas" class="form-control" placeholder="23"></label>
+                  <br>
+                    <button class="btn btn-success" id="crear-alumno">Crear Alumno</button>
+                  </div>
+                </div>
+              </div>
+          </div>
+            <hr>
+          </div>
+          <!--Fin alumnos--> 
           </div>
         </div>
     </div>
