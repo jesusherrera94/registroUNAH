@@ -415,7 +415,4 @@ app.post("/guardar-alumno", function(peticion, respuesta){
 			
 		});
 });
-
-
-
 app.listen(2020);
