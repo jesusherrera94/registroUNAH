@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Pagina Maestros</title>
+  <link rel="shortcut icon" href="/img/UNAH-logo.png">
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+</head>
+<body>
+  <nav class="white" id="white" role="navigation">
+    <div class="nav-wrapper container">
+      <img id="imagen-logo" src="img/UNAH-logo.png">
+      <a id="logo-container" href="#" class="brand-logo">Registro UNAH</a>
+      <ul class="right hide-on-med-and-down">
+        <li><button type="button" id="go-logout" class="btn btn-outline-danger">Logout</button></li>
+      </ul>
+
+      <ul id="nav-mobile" class="sidenav">
+        <li><button type="button" id="go-logout-mobile" class="btn btn-outline-danger" style="border-radius: 50px !important;">Logout</button></li>
+      </ul>
+      <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+<!--Cuerpo-->
+
+<div class="row">
+  <div class="col-1">
+      <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+          <a class="nav-link active" id="v-pills-centros-regionales-tab" data-toggle="pill" href="#v-pills-centros-regionales" role="tab" aria-controls="v-pills-centros-regionales" aria-selected="true">Landing Maestro</a>
+          <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Secciones</a>
+          <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Notas</a>
+        </div>
+  </div> 
+  <div class="col-11"> 
+      <div class="tab-content" id="v-pills-tabContent">
+          <!--Inicio de Centros Regionales-->
+        <div class="tab-pane fade show active" id="v-pills-centros-regionales" role="tabpanel" aria-labelledby="v-pills-centros-regionales-tab">
+            <h1>Landing de Maestro</h1>
+            <hr>
+          </div>
+
+        <!--Final de Centros Regionales-->
+        <!--Personal-->
+        <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+            <h1>Secciones</h1>
+            <hr>
+            
+        </div>
+        <!--Fin Personal-->
+        <!--Inicio Alumnos-->
+        <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+          <h1>Notas</h1>
+          <hr>
+        </div>
+        <!--Fin alumnos--> 
+        </div>
+      </div>
+  </div>
+</div>
+<footer style="margin-top: 100%;" class="page-footer teal">
+  <div class="container">
+      Hecho Por <a class="brown-text text-lighten-3" href="#">Jesus Herrera-20121003010</a>
+  </div>
+</footer>
+  <!--  Scripts-->
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" ></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+  <script src="js/materialize.js"></script>
+  <script src="js/init.js"></script>
+  <script>
+  $("#go-logout").click(function(){
+    $.ajax({
+        url:"/logout",
+        method: "GET",
+        success:function(respuesta){
+            console.log('respuesta exitosa')
+            location.href = '/';
+                
+        }
+    });
+})
+  </script>
+
+  </body>
+</html>

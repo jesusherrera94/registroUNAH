@@ -20,15 +20,44 @@
                     console.log("entro en negacion")
                     $('#pass-validate').addClass('alert-validate');
                 }else{
-
-                    $.ajax({
-                        url:"/login",
-                        method: "GET",
-                        success:function(respuesta){
-                            location.href ="/admin";
-                            check = true;
-                        }
-                    });
+                    //hace el logeo de alumno
+                    if($('#cta').val().length == 11){
+                        $.ajax({
+                            url:"/login-alumno",
+                            method: "POST",
+                            data:"cuenta="+$('#cta').val()+"&contrasena="+$('#pass').val(),
+                            datatype: 'json',
+                            success:function(respuesta){
+                                if(respuesta.estatus){
+                                location.href='/alumno'
+                                check = true;}
+                                else{
+                                    alert("Usuario/Contraseña incorrectos")
+                                }
+                            }
+                        });
+                    }
+                    else{
+                        $.ajax({
+                            url:"/login-empleado",
+                            method: "POST",
+                            data:"cuenta="+$('#cta').val()+"&contrasena="+$('#pass').val(),
+                            datatype: 'json',
+                            success:function(respuesta){
+                                if(respuesta.estatus){
+                                if(respuesta.CODIGO_CARGO==1){
+                                    location.href = '/admin'
+                                }else{
+                                    location.href = '/maestro'
+                                }
+                            
+                            }
+                                else{
+                                    alert("Usuario/Contraseña incorrectos")
+                                }
+                            }
+                        });
+                    }
                 }
                 return false;
             }

@@ -4,11 +4,11 @@ var app = express();
 var fs = require("fs");
 var path    = require("path");
 var mysql = require("mysql");
-
+var session = require("express-session");
 
 var credenciales = {
     user:"root",
-    password:"Alis&dei15",
+    password:"",
     host:"localhost",
     database:"db_unah",
     port:"3306"
@@ -22,17 +22,107 @@ app.use(myParser.urlencoded({extended : true}));
 
 //app.use(express.static("public"));
 app.use(express.static(__dirname + '/public'));
-app.get("/", function(req, res){
+app.use(session({secret:"ASDFE$%#%",resave:true, saveUninitialized:true}));
 
-})
+var publicAdmin = express.static("public-admin");
+var publicAlumno = express.static("public-alumno");
+var publicMaestro = express.static("public-maestro");
+
+app.use(
+    function(peticion,respuesta,next){
+        if (peticion.session.cuenta){
+			if(peticion.session.codigoTipoUsuario == null && peticion.session.cuenta>1){
+				console.log('entró en alumno')
+				publicAlumno(peticion,respuesta,next);}
+
+            else{ if (peticion.session.codigoTipoUsuario == 1){
+				console.log('entró en admin')
+                publicAdmin(peticion,respuesta,next);}
+            	else {
+					if (peticion.session.codigoTipoUsuario >= 2){
+						console.log('entró en maestro')
+					publicMaestro(peticion,respuesta,next);
+				}
+				}
+				}
+				
+        }
+        else
+            return next();
+    }
+);
+
+///Para agregar seguridad a una ruta especifica:
+function verificarAutenticacion(peticion, respuesta, next){
+	if(peticion.session.cuenta)
+		return next();
+	else
+		respuesta.send("ERROR, ACCESO NO AUTORIZADO");
+}
+
+app.get("/", function(req, res){})
 app.get("/login", function(req, res){
     console.log('peticion recibida')
     res.render(path.join(__dirname+'/public/html/login'));
 
 })
-app.get("/admin", function(req, res){
+app.post("/login-alumno", function(req, res){
     console.log('peticion recibida')
-    res.render(path.join(__dirname+'/public/html/admin'));
+	var conexion = mysql.createConnection(credenciales);
+    conexion.query("SELECT NUMERO_CUENTA, CONTRASE FROM TBL_ALUMNOS WHERE NUMERO_CUENTA = ? AND CONTRASE = sha1(?)",
+        [req.body.cuenta, req.body.contrasena],
+        function(err, data, fields){
+                if (data.length>0){
+                    req.session.cuenta = data[0].NUMERO_CUENTA;
+                    data[0].estatus = true;
+                    res.send(data[0]); 
+                }else{
+                    res.send({estatus:false, mensaje: "Login fallido"}); 
+                }
+            	
+         }
+    ); 
+
+})
+
+app.post("/login-empleado", function(req, res){
+    console.log('peticion recibida')
+    console.log('peticion recibida')
+	var conexion = mysql.createConnection(credenciales);
+    conexion.query("SELECT NUMERO_EMPLEADO, CODIGO_CARGO FROM TBL_EMPLEADOS WHERE NUMERO_EMPLEADO = ? AND CONTRASENIA = sha1(?)",
+        [req.body.cuenta, req.body.contrasena],
+        function(err, data, fields){
+                if (data.length>0){
+					req.session.cuenta = data[0].NUMERO_EMPLEADO;
+					req.session.codigoTipoUsuario = data[0].CODIGO_CARGO;
+                    data[0].estatus = true;
+                    res.send(data[0]); 
+                }else{
+                    res.send({estatus:false, mensaje: "Login fallido"}); 
+                }
+            	
+         }
+    );
+
+})
+
+app.get("/logout",function(peticion, respuesta){
+	peticion.session.destroy();
+	console.log('entro a destruir la sesion')
+	respuesta.send({estatus:true, mensaje: "Logout Exitoso"});
+});
+
+app.get("/admin",verificarAutenticacion, function(req, res){
+    console.log('peticion recibida')
+    res.render(path.join(__dirname+'/public-admin/html/admin'));
+})
+app.get("/maestro",verificarAutenticacion, function(req, res){
+    console.log('peticion recibida')
+    res.render(path.join(__dirname+'/public-maestro/index'));
+})
+app.get("/alumno",verificarAutenticacion, function(req, res){
+    console.log('peticion recibida')
+    res.render(path.join(__dirname+'/public-alumno/index'));
 })
 
 app.post('/crear-campus', function(req,res){
@@ -195,7 +285,7 @@ app.post("/guardar-empleado", function(peticion, respuesta){
 		],
 		function(error, resultado){
 			if (resultado.affectedRows==1){
-				conexion.query("INSERT INTO TBL_EMPLEADOS(CODIGO_EMPLEADO, NUMERO_EMPLEADO, SUELDO_BASE, CODIGO_TIPO_EMPLEADO, CODIGO_CARGO, CONTRASENIA) VALUES (?,?,?,?,?,?)",
+				conexion.query("INSERT INTO TBL_EMPLEADOS(CODIGO_EMPLEADO, NUMERO_EMPLEADO, SUELDO_BASE, CODIGO_TIPO_EMPLEADO, CODIGO_CARGO, CONTRASENIA) VALUES (?,?,?,?,?,sha1(?))",
 					[resultado.insertId,
 						peticion.body.numeroEmpleado,
 						peticion.body.sueldoBase,
@@ -249,7 +339,7 @@ app.post("/guardar-empleado-admin", function(peticion, respuesta){
 		],
 		function(error, resultado){
 			if (resultado.affectedRows==1){
-				conexion.query("INSERT INTO TBL_EMPLEADOS(CODIGO_EMPLEADO, NUMERO_EMPLEADO, SUELDO_BASE, CODIGO_TIPO_EMPLEADO, CODIGO_CARGO, CONTRASENIA) VALUES (?,?,?,?,?,?)",
+				conexion.query("INSERT INTO TBL_EMPLEADOS(CODIGO_EMPLEADO, NUMERO_EMPLEADO, SUELDO_BASE, CODIGO_TIPO_EMPLEADO, CODIGO_CARGO, CONTRASENIA) VALUES (?,?,?,?,?,sha1(?))",
 					[resultado.insertId,
 						peticion.body.numeroEmpleado,
 						peticion.body.sueldoBase,
@@ -306,7 +396,7 @@ app.post("/guardar-alumno", function(peticion, respuesta){
 						if (errorSelect) throw errorSelect;
 
 						if(resultado2.affectedRows==1){
-							conexion.query(`INSERT INTO TBL_ALUMNOS(CODIGO_ALUMNO, NUMERO_CUENTA, PROMEDIO, CONTRASE) VALUES (?,?,?,?)`,[
+							conexion.query(`INSERT INTO TBL_ALUMNOS(CODIGO_ALUMNO, NUMERO_CUENTA, PROMEDIO, CONTRASE) VALUES (?,?,?,sha1(?))`,[
 								resultado.insertId,
 								peticion.body.cuenta,
 								peticion.body.promedio,
