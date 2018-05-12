@@ -20,7 +20,6 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 app.use(myParser.urlencoded({extended : true}));
 
-//app.use(express.static("public"));
 app.use(express.static(__dirname + '/public'));
 app.use(session({secret:"ASDFE$%#%",resave:true, saveUninitialized:true}));
 
